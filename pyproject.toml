@@ -1,11 +1,12 @@
 [project]
-name = "airfold-apps-e2e"
+name = "cc-vibecode"
 version = "0.1.0"
-description = "Add your description here"
+description = "An AI-powered web application builder that uses Claude to automatically generate full-stack Next.js applications with database integration, version control, and live preview."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "claude-agent-sdk>=0.1.4",
+    "fastapi>=0.119.0",
     "neon-api>=0.3.0",
     "psycopg2-binary>=2.9.11",
     "pygithub>=2.8.1",

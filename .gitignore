@@ -13,3 +13,6 @@ logs
 
 .mypy_cache
 .ruff_cache
+
+env_vars
+tmp

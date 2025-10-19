@@ -12,15 +12,13 @@ Use responsive UI. Store expenses in a database. Make it look modern and user-fr
 
 ### Data Entry & Management (1-10)
 
-**Feature 1: Receipt Upload**
-```
+Feature 1: Receipt Upload
 Add receipt upload feature to the expense tracker:
 - Add file upload field to expense form
 - Store receipt images in uploads/ folder
 - Display receipt thumbnail on expense list
 - Click thumbnail to view full receipt
 - Store file path in expenses table (add receipt_path column)
-```
 
 **Feature 2: Recurring Expenses**
 ```

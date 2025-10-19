@@ -3,7 +3,7 @@ import os
 import re
 import shutil
 
-from airfold_apps.logger import create_logger
+from cc_vibecode.logger import create_logger
 from github import Github, GithubException
 from github.AuthenticatedUser import AuthenticatedUser
 from typing import Dict, Any
@@ -51,13 +51,14 @@ class CustomGitAPI:
                 "error": e,
             }
 
-    def ensure_github_repo(self, repo_url: str) -> Dict[str, Any]:
+    def ensure_github_repo(self, repo_url: str, template_owner: str = "shnkreddy98", template_repo: str = "init_git") -> Dict[str, Any]:
         """
-        Ensure a GitHub repository exists, creating it if necessary.
+        Ensure a GitHub repository exists, creating it from a template if necessary.
 
         Args:
             repo_url: GitHub repository URL (e.g., https://github.com/owner/repo.git or git@github.com:owner/repo.git)
-            github_token: GitHub Personal Access Token (or uses GITHUB_TOKEN env var)
+            template_owner: Owner of the template repository (default: "shnkreddy98")
+            template_repo: Name of the template repository (default: "init_git")
 
         Returns:
             Dict with 'success', 'exists', 'created', and 'message' keys
@@ -107,39 +108,54 @@ class CustomGitAPI:
 
             except GithubException as e:
                 if e.status == 404:
-                    # Repository doesn't exist, create it
-                    logger.info(f"[GitHub] Creating repository {owner}/{repo_name}...")
+                    # Repository doesn't exist, create it from template
+                    logger.info(f"[GitHub] Creating repository {owner}/{repo_name} from template {template_owner}/{template_repo}...")
 
                     try:
+                        # Get the template repository object
+                        template = g.get_repo(f"{template_owner}/{template_repo}")
+
                         user = g.get_user()
                         if isinstance(user, AuthenticatedUser):
-                            new_repo = user.create_repo(
+                            # Create repository from template
+                            # PyGithub API: create_repo_from_template(name, repo, description=..., private=...)
+                            new_repo = user.create_repo_from_template(
                                 name=repo_name,
+                                repo=template,
                                 private=False,
-                                auto_init=False,  # Don't auto-create README
+                                description=f"Next.js application created from template"
                             )
                         else:
                             new_repo = user.get_repo(name=repo_name)
+
                         logger.info(
-                            f"✓ [GitHub] Created repository {owner}/{repo_name}"
+                            f"✓ [GitHub] Created repository {owner}/{repo_name} from template"
                         )
+
+                        # Wait for GitHub to finish copying template files (async operation)
+                        # GitHub creates the repo immediately but copies files in background
+                        logger.info("Waiting for GitHub to copy template files...")
+                        import time
+                        time.sleep(5)  # Wait 5 seconds for template files to be copied
+                        logger.info("Template copy should be complete, proceeding with clone")
+
                         return {
                             "success": True,
                             "exists": True,
                             "created": True,
-                            "message": f"Created repository {owner}/{repo_name}",
+                            "message": f"Created repository {owner}/{repo_name} from template {template_owner}/{template_repo}",
                             "repo": new_repo,
                         }
 
                     except GithubException as create_error:
                         logger.error(
-                            f"[GitHub] Failed to create repository: {create_error}"
+                            f"[GitHub] Failed to create repository from template: {create_error}"
                         )
                         return {
                             "success": False,
                             "exists": False,
                             "created": False,
-                            "message": f"Failed to create repository: {create_error}",
+                            "message": f"Failed to create repository from template: {create_error}",
                         }
                 else:
                     # Some other error

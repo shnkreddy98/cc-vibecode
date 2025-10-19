@@ -3,7 +3,7 @@ import os
 import psycopg2 #type: ignore
 import time
 
-from airfold_apps.logger import create_logger
+from cc_vibecode.logger import create_logger
 
 from dotenv import load_dotenv
 from neon_api import NeonAPI #type: ignore
@@ -185,12 +185,13 @@ class CustomNeonAPI:
             conn.autocommit = True
             cursor = conn.cursor()
 
-            cursor.execute(f"GRANT CREATE ON SCHEMA public TO {role_name};")
+            # Quote role names to handle special characters like hyphens
+            cursor.execute(f'GRANT CREATE ON SCHEMA public TO "{role_name}";')
             cursor.execute(
-                f"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {role_name};"
+                f'GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "{role_name}";'
             )
             cursor.execute(
-                f"GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO {role_name};"
+                f'GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "{role_name}";'
             )
 
             logger.info(f"✓ Granted permissions to {role_name}")
@@ -226,7 +227,7 @@ class CustomNeonAPI:
         if 200 <= res.status_code <= 299:
             return res.json()
 
-    def create_project(self, project_name: str, branch_name: str) -> Project:
+    def _create_project(self, project_name: str, branch_name: str) -> Project:
         data = {
             "project": {
                 "branch": {
@@ -243,7 +244,7 @@ class CustomNeonAPI:
         projects = self._get_projects()
         if len(projects) == 0:
             logger.info("No Projects found, creating one..")
-            project = self.create_project(
+            project = self._create_project(
                 project_name=project_name, branch_name=branch_name
             )
 

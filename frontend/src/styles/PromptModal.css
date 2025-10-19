@@ -1,0 +1,16 @@
+.prompt-modal {
+  max-width: 600px;
+}
+
+.textarea {
+  resize: vertical;
+  font-family: inherit;
+  min-height: 120px;
+}
+
+.help-text {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #999;
+  font-style: italic;
+}
