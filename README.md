@@ -1,4 +1,4 @@
-# Airfold Apps E2E
+# cc-vibecode
 
 An AI-powered web application builder that uses Claude to automatically generate full-stack Next.js applications with database integration, version control, and live preview.
 
@@ -53,7 +53,7 @@ This project provides a complete end-to-end solution for building web applicatio
 
 ```bash
 git clone <your-repo-url>
-cd airfold-apps-e2e
+cd cc-vibecode
 ```
 
 ### 2. Install Python Dependencies
@@ -150,7 +150,7 @@ Open your browser to **http://localhost:5173**
 ## Project Structure
 
 ```
-airfold-apps-e2e/
+cc-vibecode/
 ├── main.py                 # FastAPI server & orchestration
 ├── cc_vibecode/            # Core modules
 │   ├── git.py              # GitHub API integration
